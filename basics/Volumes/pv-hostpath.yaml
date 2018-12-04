@@ -1,0 +1,39 @@
+kind: PersistentVolume
+apiVersion: v1
+metadata:
+  name: nginx
+  labels:
+    type: local
+spec:
+  capacity:
+    storage: 2Gi
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: "/var/training"
+    
+---
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx-volume
+  labels:
+    app: nginx
+    app: lnc
+spec:
+  containers:
+  - image: nginx
+    name: nginx
+    securityContext:
+      privileged: true
+    ports:
+    - containerPort: 80
+      name: nginx-http
+    volumeMounts:
+    - name: nginx
+      mountPath: /root/nginx-volume   # path in the pod
+  volumes:
+  - name: nginx
+    hostPath:
+      path: /var/training             # path in the host machine

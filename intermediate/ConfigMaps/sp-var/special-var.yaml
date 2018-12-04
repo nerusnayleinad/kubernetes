@@ -1,0 +1,10 @@
+# If by comand line:
+# $ kubectl create configmap special-config --from-literal=special.how=very
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: special-config
+  namespace: default
+data:
+  special.how: very
+  not.that.special: super

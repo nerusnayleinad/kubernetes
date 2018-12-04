@@ -1,0 +1,61 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: nginx
+  labels:
+    app: nginx
+spec:
+  replicas: 4
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: nginx
+        new: label
+    spec:
+      containers:
+      - image: nginx
+        name: nginx
+        volumeMounts:
+        - name: config-volume
+          mountPath: /usr/share/nginx/html/
+        ports:
+        - containerPort: 80
+          name: http
+      volumes:
+        - name: config-volume
+          configMap:
+            name: special-config
+            items:
+            - key: landing.page
+              path: index.html
+---
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: special-config
+data:
+  landing.page: "hello everyone"
+  
+---
+
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: ing-cm
+spec:
+  rules:
+  - host: site1.training.com
+    http:
+      paths:
+      - backend:
+          serviceName: service1
+          servicePort: 80
+  - host: site2.training.com
+    http:
+      paths:
+      - backend:
+          serviceName: service2
+          servicePort: 80

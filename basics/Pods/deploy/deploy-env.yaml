@@ -1,0 +1,27 @@
+apiVersion: extensions/v1beta1  #use apps/v1 after V1.9.0
+kind: Deployment                #use apps/v1beta2 before 1.9.0
+metadata:
+  name: nginx
+  labels:
+    app: nginx
+spec:
+  replicas: 4
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: nginx
+        new: label
+    spec:
+      containers:
+      - name: nginx
+        image: nginx
+        env:
+        - name: MY_POD_IP
+          valueFrom:
+            fieldRef:
+              fieldPath: status.podIP
+        ports:
+        - containerPort: 80
+          name: http

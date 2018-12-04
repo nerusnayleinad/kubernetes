@@ -1,0 +1,3 @@
+- The config volume is mounted at /redis-master. It uses path to add the redis-config key to a file named redis.conf. The file path for the redis config, therefore, is /redis-master/redis.conf. This is where the image will look for the config file for the redis master.
+
+- $ kubectl exec -it redis redis-cli

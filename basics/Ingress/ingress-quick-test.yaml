@@ -1,0 +1,48 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: ingress-qt-depl
+  labels:
+    app: nginx
+spec:
+  replicas: 4
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - image: nginx
+        name: nginx
+        ports:
+        - containerPort: 80
+          name: http
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: ingress-qt-svc
+spec:
+  ports:
+  - port: 80
+    targetPort: 80
+    protocol: TCP
+    name: http
+  selector:
+    app: nginx
+  type: NodePort
+  
+---
+
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: ingress-qt-ing
+spec:
+  backend:
+    serviceName: ingress-qt-svc
+    servicePort: 80

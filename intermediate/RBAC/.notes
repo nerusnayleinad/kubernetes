@@ -1,0 +1,7 @@
+It might not let to create the resource for not having permissions.
+New roles can only be created by a cluster-admin.
+
+Command to fix:
+kubectl create clusterrolebinding masta-of-the-klusta \
+  --clusterrole=cluster-admin \
+  --user=sdanielyan@google.com

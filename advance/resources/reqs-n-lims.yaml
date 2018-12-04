@@ -1,0 +1,26 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: res-req-lim
+spec:
+  containers:
+  - name: nginx
+    image: nginx
+    resources:
+      requests:
+        memory: "4Mi"       # 512M
+        cpu: "100m"         # 1
+      limits:
+        memory: "4Mi"       # 512M
+        cpu: "100m"         # 1
+  - name: ab
+    image: viejo/ab
+    command: [ "/bin/bash", "-c", "--" ]
+    args: [ "while true; do ab -c 1000 -n 100000 127.0.0.1/; sleep 1; done;" ]
+    resources:
+      requests:
+        memory: "32M"
+        cpu: "100m"
+      limits:
+        memory: "64M"
+        cpu: "200m"

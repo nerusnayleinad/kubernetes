@@ -1,0 +1,56 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: my-secret
+type: Opaque
+data:
+  username: suren       # c3VyZW4K
+  password: password    # cGFzc3dvcmQK
+
+---
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: my-configmap
+data:
+  config: "data from a configmap"
+
+---
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: projected-volumes
+spec:
+  containers:
+  - name: bb
+    image: busybox
+    command: [ "sh", "-c", "sleep 1000"]
+    volumeMounts:
+    - name: projected-volumes
+      mountPath: "/projected-volume"
+      readOnly: true
+  volumes:
+  - name: projected-volumes
+    projected:
+      sources:
+      - secret:
+          name: my-secret
+          items:
+            - key: username
+              path: my-group/my-username
+      - downwardAPI:
+          items:
+            - path: "labels"
+              fieldRef:
+                fieldPath: metadata.labels
+            - path: "cpu_limit"
+              resourceFieldRef:
+                containerName: bb
+                resource: limits.cpu
+      - configMap:
+          name: my-configmap
+          items:
+            - key: config
+              path: my-group/my-config

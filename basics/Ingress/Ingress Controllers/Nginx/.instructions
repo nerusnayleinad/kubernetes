@@ -1,0 +1,18 @@
+Deploy the following yaml files.
+1.- namespace.yaml
+2.- configmap.yaml
+3.- default-backend.yaml
+
+Depending on the protocol TCP or UDP
+4.1.- tcp-services-configmap.yaml
+4.2.- udp-services-configmap.yaml
+
+If want to implement with RBAC
+5.- rbac.yaml
+
+Depending on with RBAC or without
+6.1.- ingress-controller-with-rbac.yaml
+6.2.- ingress-controller-without-rbac.yaml
+
+Create the ingress resource
+7.- ../../Ingress/ingress-quick-test.yaml

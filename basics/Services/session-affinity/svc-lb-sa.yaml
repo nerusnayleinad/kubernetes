@@ -1,0 +1,19 @@
+# https://stackoverflow.com/questions/48993286/is-it-possible-to-route-traffic-to-a-specific-pod
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: svc-lb
+spec:
+  ports:
+  - port: 80
+    targetPort: 80
+    protocol: TCP
+    name: http
+  selector:
+    app: nginx
+  type: LoadBalancer
+  sessionAffinity: ClientIP
+  sessionAffinityConfig:
+    clientIP:
+      timeoutSeconds: 3600

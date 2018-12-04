@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: all-in-one
+  namespace: default
+data:
+  COUNTRY: Spain
+  CITY: Barcelona
+  ADDRESS: "Goya 18th, 2nd 1st"

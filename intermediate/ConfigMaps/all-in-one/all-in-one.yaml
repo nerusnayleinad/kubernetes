@@ -1,0 +1,49 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: env-var
+data:
+  COUNTRY: Spain
+  CITY: Barcelona
+  ADDRESS: "Goya 18th, 2nd 1st"
+
+---
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: special-config
+data:
+  special.level: very
+  special.type: charm
+  hello: world
+
+---
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: all-in-one-pod
+spec:
+  containers:
+    - name: bb
+      image: k8s.gcr.io/busybox
+      tty: true
+      envFrom:
+      - configMapRef:
+          name: all-in-one
+      volumeMounts:
+      - name: config-volume
+        mountPath: /etc/config
+  volumes:
+    - name: config-volume
+      configMap:
+        name: special-config
+        items:
+        - key: special.level
+          path: keys
+        - key: special.type
+          path: types
+        - key: hello
+          path: world
+  restartPolicy: Never

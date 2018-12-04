@@ -1,0 +1,46 @@
+Configuring Private DNS Zones and Upstream Nameservers in Kubernetes
+
+1.- Create a ConfigMap type resource
+> kubectl replace -f configmap-dns.yaml
+--------------------
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: kube-dns
+  namespace: kube-system
+data:
+  stubDomains: |
+    {"domain.com": ["216.239.32.106"]}
+  upstreamNameservers: |
+    ["8.8.8.8", "8.8.4.4"]
+--------------------
+NOTE 1 (stubDomains): "domain.com" needs to match DNS name. And the IP address needs to be of the
+nameserver in charge of resolving the hostname (e.g. the IP address that returns
+"nslookup ns-cloud-a1.googledomains.com"
+NOTE 2 (upstreamNameservers): There are the nameservers in charge of resolving global
+domain names (e.g. google.com). Maximum of 3.
+
+2.- Delete kube-dns pods to force the re-cretion of those with the new values
+> kubectl delete pod -l k8s-app=kube-dns -n kube-system
+pod "kube-dns-7cc95b7957-klhg5" deleted
+pod "kube-dns-7cc95b7957-rs4fk" deleted
+
+NOTE: Two pods are going to get deleted and another two are going to spin up right away.
+
+2.1.- To check that everything went fine, we can check the logs of kube-dns containers.
+> kubectl logs __KUBE_DNS_POD_NAME__ __CONTAINER_NAME__ -n kube-system
+
+NOTE: __CONTAINER_NAME__ is going to be either "kubedns" or "dnsmasq".
+
+3.- Tests
+Now we can get into the pod and make some tests. If we have a DNS A record of
+
+demo.domain.com -> A -> 1.2.3.4
+                        2.3.4.5
+                        3.4.5.6
+                        4.5.6.7
+and
+
+cname.domain.com -> CNAME -> demo.domain.com
+
+we can nslookup either of them and are going to be resolved 

@@ -1,0 +1,8 @@
+There are two options of creating the ingress controller:
+1.- Deployment
+2.- DaemonSet
+https://docs.traefik.io/user-guide/kubernetes/
+
+Once done the RBAC + Deploy (SA + Deploy + SVC), good to create the Ingress.
+
+Test basic-ingress.yaml file

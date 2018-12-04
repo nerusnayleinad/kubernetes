@@ -1,0 +1,30 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx-fqdn
+  labels:
+    app: nginx
+spec:
+  clusterIP: None
+  hostname: nginx       # FQDN will be nginx.server.default.svc.cluster.local 
+  subdomain: server     #
+  containers:
+  - name: nginx
+    image: nginx
+    ports:
+    - containerPort: 80
+    
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: server      # needs to match with the subdomain of the pod
+spec:
+  clusterIP: None
+  selector:
+    app: nginx
+  ports:
+  - name: port      # Actually, no port is needed.
+    port: 80
+    targetPort: 80

@@ -1,0 +1,29 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  labels:
+    run: nginx
+  name: alive-n-ready-http
+spec:
+  containers:
+  - name: nginx
+    image: viejo/nginx-healthz
+    command: ["nginx", "-g", "daemon off;"]
+    livenessProbe:
+      httpGet:
+        path: /healthz
+        port: 8080
+        httpHeaders:
+        - name: X-Custom-Header
+          value: Ackstorm
+      initialDelaySeconds: 5
+      periodSeconds: 10
+    readinessProbe:
+      httpGet:
+        path: /healthz
+        port: 8080
+        httpHeaders:
+        - name: X-Custom-Header
+          value: Ackstorm
+      initialDelaySeconds: 5
+      periodSeconds: 10

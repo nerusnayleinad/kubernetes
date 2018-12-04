@@ -1,0 +1,10 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: ingress
+spec:
+  tls:
+  - secretName: certs
+  backend:
+    serviceName: svc-webserver
+    servicePort: 80

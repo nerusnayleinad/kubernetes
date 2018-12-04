@@ -1,0 +1,31 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: ingress
+spec:
+  tls:
+  - secretName: tls 
+  rules:
+  - host: site1.domain.com
+    http:
+      paths:
+      - backend:
+          serviceName: internal-lb-1
+          servicePort: 80
+  - host: site2.domain.com
+    http:
+      paths:
+      - backend:
+          serviceName: internal-lb-2
+          servicePort: 80
+          
+# --------------------------------------------------------------------
+# How to create an SSL certificate for an Ingress.
+#
+# 1.- Creating the certificates
+# > openssl req -newkey rsa:2048 -nodes -keyout tls.key -out tls.csr
+# > openssl x509 -in tls.csr -out tls.pem -req -signkey tls.key
+
+# 2.- Creating secret from the files created previously
+# > kubectl create secret tls certs --cert tls.pem --key tls.key
+# --------------------------------------------------------------------
