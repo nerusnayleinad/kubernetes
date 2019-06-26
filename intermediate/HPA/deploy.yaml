@@ -1,0 +1,68 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: php-apache
+  labels:
+    app: php-apache
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: php-apache
+    spec:
+      volumes:
+       - name: nginx-apache
+         emptyDir: {}
+      containers:
+      - name: nginx
+        image: viejo/nginx-8080:V2
+        ports:
+        - containerPort: 8080
+          name: nginx-http
+        tty: true
+        command: ["nginx", "-g", "daemon off;"]
+        volumeMounts:
+        - name: nginx-apache
+          mountPath: /var/www/html/
+      - name: php-apache
+        image: viejo/php-apache:health-check
+        ports:
+        - containerPort: 80
+          name: apache-http
+        command: ["sh", "-c"]
+        args:
+        - while true; do
+            echo $HOST_IP > /app/index.html;
+            echo $POD_IP >> /app/index.html;
+            apache2ctl start;
+          done;
+        volumeMounts:
+        - name: nginx-apache
+          mountPath: /app/
+        env:
+        - name: POD_IP
+          valueFrom:
+            fieldRef:
+              fieldPath: status.podIP
+        - name: HOST_IP
+          valueFrom:
+            fieldRef:
+              fieldPath: status.hostIP
+        livenessProbe:
+          httpGet:
+            path: /healthz
+            port: 80
+        readinessProbe:
+          httpGet:
+            path: /healthz
+            port: 80
+        resources:
+          requests:
+            memory: "16M"
+            cpu: "10m"
+          limits:
+            memory: "32M"
+            cpu: "20m"
